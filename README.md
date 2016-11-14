@@ -1,4 +1,4 @@
-Plugin de integração do Roundcube com o serviço CaUMa.
+Plugin de integração do Roundcube com o serviço [CaUMa](https://cauma.pop-ba.rnp.br/about).
 
 
 ## Sobre o CaUMa
