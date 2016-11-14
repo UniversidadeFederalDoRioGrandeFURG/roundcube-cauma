@@ -1,0 +1,40 @@
+div.cauma.message {
+	display: block;
+	background-position: 5px -83px;
+	padding: 6px 12px 6px 30px;
+	white-space: normal;
+	color: #fff;
+	font-size: 1.1em;
+}
+
+div.cauma.message.danger {
+	border: 1px solid #ff3e3e;
+	background-color: #ff6c6c;
+}
+
+div.cauma.message.warning {
+	border: 1px solid #ffdf0e;
+	background-color: #fef893;
+	color: #7f6f03;
+}
+
+.caumaMsgLock {
+	color: #fff;
+	background: #F64B2F;
+	padding: 5px 5px 15px 15px;
+}
+
+.caumaMsgLock>a {
+	color: #fff;
+}
+
+.caumaMsgLock div.buttons {
+	margin: 0px !important;
+	padding-top: 10px;
+}
+
+.caumaMsgLock .buttons a{
+	margin-left: 0 !important;
+	margin-right: 5px !important;
+	margin-top: 2px !important;	
+}
