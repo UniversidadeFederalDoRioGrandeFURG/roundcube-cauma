@@ -10,7 +10,7 @@ CaUMa (Catálogo de URLs Maliciosas) é um serviço gratuito e público criado p
 Clonar o repositório roundcube-cauma dentro da pasta plugins da instalação do roundcube. Editar o arquivo de configuração e incluir o nome da pasta na lista de plugins ativos;
 
 ```
-git clone https://git.furg.br/lisandrotsilva/roundcube-cauma.git cauma
+git clone -c http.sslVerify=false https://git.furg.br/lisandrotsilva/roundcube-cauma.git cauma
 ```
 
 Em roundcubemail\config\config.inc.php
