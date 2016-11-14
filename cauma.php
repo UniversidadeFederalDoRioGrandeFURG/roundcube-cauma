@@ -11,6 +11,8 @@ class cauma extends rcube_plugin{
 		$this->noframe = false;
 		$this->noajax = false;
 		
+		$this->load_config();
+
 		// Captura Hook
 		$this->rcmail = rcmail::get_instance();
 		if ($this->rcmail->action == 'preview' || $this->rcmail->action == 'show'){
@@ -36,8 +38,8 @@ class cauma extends rcube_plugin{
 	public function verify($args){
 		$iTime = microtime(true);
 		if (null == $this->cache)
-			$this->cache = rcube::get_instance()->get_cache('cauma', 'db', 86400, false);
-		
+			$this->cache = rcube::get_instance()->get_cache_shared('cauma', false);
+
 		ob_start();
 		$this->rcmail->storage->print_raw_body($args['message']->uid, false);
 		$email = ob_get_clean();
@@ -45,7 +47,7 @@ class cauma extends rcube_plugin{
 		$links = $this->getLinks($email);
 		
 		foreach($links as $link){
-			$hash = 'cauma' . md5($link);
+			$hash = md5($link);
 			$problem = $this->cache->get($hash);
 			
 			if ($problem === null){
@@ -63,7 +65,7 @@ class cauma extends rcube_plugin{
 				break;
 			}
 		}
-		error_log("CaUMa: Tempo de validação. " . (microtime(true) - $iTime));
+		error_log("CaUMa: Tempo de validacao. " . (microtime(true) - $iTime));
 		return $args;
 	}
 
@@ -76,8 +78,8 @@ class cauma extends rcube_plugin{
 			CURLOPT_HEADER => false,
 			CURLOPT_NOBODY => true,
 			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_CONNECTTIMEOUT => 1,
-			CURLOPT_TIMEOUT => 1 
+			CURLOPT_CONNECTTIMEOUT => 5,
+			CURLOPT_TIMEOUT => 5
 		));
 		curl_exec($ch);
 		$info = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -87,7 +89,7 @@ class cauma extends rcube_plugin{
 			case 200:
 				return 1;
 			case 404:
-				return 0;
+				return 2;
 			default:
 				return null;
 		}
