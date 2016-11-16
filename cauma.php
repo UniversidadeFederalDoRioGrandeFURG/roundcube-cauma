@@ -44,7 +44,6 @@ class cauma extends rcube_plugin{
 			$this->cache = rcube::get_instance()->get_cache_shared('cauma', false);
 		
 		$iTime = microtime(true);
-		$data = date('Y-m-d H:i:s');
 		
 		$count = 0;
 		foreach($links as $link){
@@ -58,7 +57,7 @@ class cauma extends rcube_plugin{
 					$args['content'][] = $this->getMessage('<strong>Atenção</strong>, não foi possível verificar a confiabilidade dos links do e-mail.', 'warning');
 					break;
 				}
-				error_log("{$data} URL " . ($problem == 1? 'block': 'ok') . " {$link}\n", 3, '/var/log/cauma.log');
+				$this->log('URL ' . ($problem == 1? 'block ': 'ok ') . $link);
 				if ($this->cache !== null)
 					$this->cache->set($hash, $problem);
 			}
@@ -70,7 +69,7 @@ class cauma extends rcube_plugin{
 		}
 		
 		if ($count > 0)
-			error_log("{$data} Tempo " . (int) (microtime(true) - $iTime) . " {$count}\n", 3, '/var/log/cauma.log');
+			$this->log('Tempo ' . (int)(microtime(true) - $iTime) . ' ' . $count);
 		
 		return $args;
 	}
@@ -97,6 +96,7 @@ class cauma extends rcube_plugin{
 			case 404:
 				return 2;
 			default:
+				$this->log('Erro ao comunicar '.$info);
 				return null;
 		}
 	}
@@ -120,5 +120,9 @@ class cauma extends rcube_plugin{
 				<a href="#" class="vermesmoassim button">Entendo os riscos e desejo visualizar a mensagem</a>
 			</div>
 		</div>';
+	}
+	
+	protected function log($msg){
+		error_log(date('Y-m-d H:i:s') . ' ' . $msg . "\n", 3, '/var/log/cauma.log');
 	}
 }
