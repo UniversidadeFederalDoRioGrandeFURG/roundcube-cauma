@@ -47,3 +47,41 @@ sudo cat <<EOF > /etc/logrotate.d/cauma
 }
 EOF
 ```
+
+## Analisando Logs ##
+
+Relação de URLs que foram checadas e retornadas como **NÃO FRAUDULENTAS**
+```
+grep -P '^[\d\-: ]+ URL ok ' /var/log/cauma.log
+```
+
+Relação de URLs que foram checadas e retornadas como **FRAUDULENTAS**
+```
+grep -P '^[\d\-: ]+ URL block ' /var/log/cauma.log
+```
+
+Contador dos tempos de consulta por URL
+```
+grep -P '^[\d\-: ]+ Tempo ' /var/log/cauma.log | awk -F' ' '{print "echo \"scale=1;"$4"/"$5"\" | bc"}' | bash | sort -n | uniq -c | sort -n
+```
+A primeira coluna número de ocorrencias a segunda o tempo demandado para consulta, por exemplo:
+```
+      1 1.0
+    122 .5
+```
+- 122 requisições de consulta ao CaUMa foram respondidas em 0.5 segundos
+- 1 requisição respondeu em 1 segundo
+
+Contador de tempos de processamento antes de apresentar e-mail
+```
+grep -P '^[\d\-: ]+ Tempo ' /var/log/cauma.log | cut -d' ' -f4 | sort -n | uniq -c | sort -n
+```
+A primeira coluna número de ocorrencias a segunda o tempo total de processamento antes de apresentar o e-mail, por exemplo:
+```
+      4 10
+     73 0
+```
+- 73 e-mails precisaram de 0 segundos para analisar suas URLs
+- 4 e-mails precisaram de 10 segundos para analisar suas URLs
+
+Normalmente o tempo elevado de processamento é decorrente de um grande número de URLs no e-mail
