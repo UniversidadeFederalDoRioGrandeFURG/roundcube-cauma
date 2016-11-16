@@ -8,11 +8,6 @@ class cauma extends rcube_plugin{
 	private $rcmail;
 
 	public function init(){
-		$this->noframe = false;
-		$this->noajax = false;
-		
-		$this->load_config();
-		
 		// Captura Hook
 		$this->rcmail = rcmail::get_instance();
 		if ($this->rcmail->action == 'preview' || $this->rcmail->action == 'show'){
@@ -39,9 +34,9 @@ class cauma extends rcube_plugin{
 		ob_start();
 		$this->rcmail->storage->print_raw_body($args['message']->uid, false);
 		$email = ob_get_clean();
-		
+
 		$links = $this->getLinks($email);
-		
+
 		if (count($links) == 0)
 			return $args;
 		
@@ -54,7 +49,7 @@ class cauma extends rcube_plugin{
 		$count = 0;
 		foreach($links as $link){
 			$hash = md5($link);
-			$problem = $this->cache->get($hash);
+			$problem = $this->cache === null ? null : $this->cache->get($hash);
 			
 			if ($problem === null){
 				$count++;
@@ -64,7 +59,8 @@ class cauma extends rcube_plugin{
 					break;
 				}
 				error_log("{$data} URL " . ($problem == 1? 'block': 'ok') . " {$link}\n", 3, '/var/log/cauma.log');
-				$this->cache->set($hash, $problem);
+				if ($this->cache !== null)
+					$this->cache->set($hash, $problem);
 			}
 			
 			if ($problem == 1){
