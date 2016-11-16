@@ -12,7 +12,7 @@ class cauma extends rcube_plugin{
 		$this->noajax = false;
 		
 		$this->load_config();
-
+		
 		// Captura Hook
 		$this->rcmail = rcmail::get_instance();
 		if ($this->rcmail->action == 'preview' || $this->rcmail->action == 'show'){
@@ -36,27 +36,34 @@ class cauma extends rcube_plugin{
 	 * @return $args
 	 */
 	public function verify($args){
-		$iTime = microtime(true);
-		if (null == $this->cache)
-			$this->cache = rcube::get_instance()->get_cache_shared('cauma', false);
-
 		ob_start();
 		$this->rcmail->storage->print_raw_body($args['message']->uid, false);
 		$email = ob_get_clean();
 		
 		$links = $this->getLinks($email);
 		
+		if (count($links) == 0)
+			return $args;
+		
+		if (null == $this->cache)
+			$this->cache = rcube::get_instance()->get_cache_shared('cauma', false);
+		
+		$iTime = microtime(true);
+		$data = date('Y-m-d H:i:s');
+		
+		$count = 0;
 		foreach($links as $link){
 			$hash = md5($link);
 			$problem = $this->cache->get($hash);
 			
 			if ($problem === null){
+				$count++;
 				$problem = $this->hasProblem($link);
 				if ($problem === null){
 					$args['content'][] = $this->getMessage('<strong>Atenção</strong>, não foi possível verificar a confiabilidade dos links do e-mail.', 'warning');
 					break;
 				}
-				error_log("CaUMa: {$problem} {$link}");
+				error_log("{$data} URL " . ($problem == 1? 'block': 'ok') . " {$link}\n", 3, '/var/log/cauma.log');
 				$this->cache->set($hash, $problem);
 			}
 			
@@ -65,7 +72,10 @@ class cauma extends rcube_plugin{
 				break;
 			}
 		}
-		error_log("CaUMa: Tempo de validacao. " . (microtime(true) - $iTime));
+		
+		if ($count > 0)
+			error_log("{$data} Tempo " . (int) (microtime(true) - $iTime) . " {$count}\n", 3, '/var/log/cauma.log');
+		
 		return $args;
 	}
 
@@ -79,7 +89,7 @@ class cauma extends rcube_plugin{
 			CURLOPT_NOBODY => true,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_CONNECTTIMEOUT => 5,
-			CURLOPT_TIMEOUT => 5
+			CURLOPT_TIMEOUT => 5 
 		));
 		curl_exec($ch);
 		$info = curl_getinfo($ch, CURLINFO_HTTP_CODE);
