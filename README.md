@@ -22,7 +22,7 @@ sudo service apache2 restart
 Clonar o repositório roundcube-cauma dentro da pasta plugins da instalação do roundcube. Editar o arquivo de configuração e incluir o nome da pasta na lista de plugins ativos;
 
 ```
-git clone https://github.com/lisandroTSilva/roundcube-cauma.git /caminho/instalacao/roundcube/plugins/cauma
+git clone https://github.com/UniversidadeFederalDoRioGrandeFURG/roundcube-cauma /caminho/instalacao/roundcube/plugins/cauma
 touch /var/log/cauma.log
 sudo chown www-data:www-data /var/log/cauma.log
 ```
