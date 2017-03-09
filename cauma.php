@@ -31,10 +31,7 @@ class cauma extends rcube_plugin{
 	 * @return $args
 	 */
 	public function verify($args){
-		ob_start();
-		$this->rcmail->storage->print_raw_body($args['message']->uid, false);
-		$email = ob_get_clean();
-
+		$email = preg_replace('/=\r?\n/m', '', $this->rcmail->storage->get_raw_body($args['message']->uid));
 		$links = $this->getLinks($email);
 
 		if (count($links) == 0)
