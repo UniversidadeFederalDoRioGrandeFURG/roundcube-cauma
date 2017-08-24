@@ -2,6 +2,9 @@
 
 Plugin de integração do Roundcube com o serviço [CaUMa](https://cauma.pop-ba.rnp.br/about).
 
+## Aviso! 
+Com a atualização do CaUMa no dia 23/08/2017, que descontinuou a versão 1.0 da API, esse código precisa ser convertido para a versão 2.0 para voltar a funcionar. Recomendamos a integração direta com o [spamassassin](https://github.com/UniversidadeFederalDoRioGrandeFURG/spamassassin-cauma).
+
 ## Sobre o CaUMa
 
 CaUMa (Catálogo de URLs Maliciosas) é um serviço gratuito e público criado pelo CERT.Bahia, que disponibiliza um meio de consulta a urls fraudulentas identificadas na Internet. O propósito desse serviço é ajudar a comunidade a se proteger das diversas fraudes que estão circulando no mundo digital.
